@@ -1,3 +1,16 @@
+function getDeeperReadings( input ) {
+  const parsedInput = input.split("\n");
+
+  const count = parsedInput.reduce((c,e, i) => {
+    if(i > 0 && parseInt(e) > parseInt(parsedInput[i-1])) {
+      c++;
+    }
+    return c;
+  },0);
+  
+  console.log(count);
+}
+
 const input = `157
 158
 167
@@ -1999,13 +2012,4 @@ const input = `157
 3794
 3798`;
 
-const parsedInput = input.split("\n");
-
-const count = parsedInput.reduce((c,e, i) => {
-	if(i > 0 && parseInt(e) > parseInt(parsedInput[i-1])) {
-  	c++;
-  }
-  return c;
-},0);
-
-console.log(count);
+getDeeperReadings( input )
