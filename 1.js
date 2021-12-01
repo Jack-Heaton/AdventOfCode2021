@@ -1,8 +1,10 @@
-function getDeeperReadings( input ) {
-  const parsedInput = input.split("\n");
+function getInputArray(input) {
+	return input.split("\n").map((e) => parseInt(e));
+ }
 
-  const count = parsedInput.reduce((c,e, i) => {
-    if(i > 0 && parseInt(e) > parseInt(parsedInput[i-1])) {
+function getDeeperReadings(input) {
+  const count = input.reduce((c,e, i) => {
+    if(i > 0 && e > input[i-1]) {
       c++;
     }
     return c;
@@ -10,6 +12,29 @@ function getDeeperReadings( input ) {
   
   console.log(count);
 }
+
+function getReadingWindows(input) {
+
+  const windows = input.reduce((c,e, i) => {
+    if( input[i+2]) {
+    	c.push( e + input[i + 1] + input[i+2] )
+    }
+    return c;
+  },[]);
+  
+  return windows;
+}
+
+const testInput = `199
+200
+208
+210
+200
+207
+240
+269
+260
+263`;
 
 const input = `157
 158
@@ -2012,4 +2037,14 @@ const input = `157
 3794
 3798`;
 
-getDeeperReadings( input )
+const inputArray = getInputArray(input); 
+
+const testInputArray = getInputArray(testInput); 
+
+getDeeperReadings(testInputArray);
+
+getDeeperReadings(getReadingWindows(testInputArray));
+
+getDeeperReadings(inputArray);
+
+getDeeperReadings(getReadingWindows(inputArray));
