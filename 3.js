@@ -22,27 +22,21 @@ function calculatePowerRates(input) {
   .reduce((c,r) => c * parseInt(r,2), 1);
 }
 
+function getFinalValue( input, index) {
+  let i = 0;
+  
+ 	while( input.length > 1 ) {
+		const mc = getMostCommon(input);
+  	input = input.filter( r => r[i] === mc[index][i]);
+    i++;
+  }
+  
+  return input;
+}
+
 function calculateOxygenRates(input) {
   
-  let i = 0;
-  let o2Rate = input;
-  let co2Rate = input;
-  
- 	while( o2Rate.length > 1 ) {
-		const mc = getMostCommon(o2Rate);
-  	o2Rate = o2Rate.filter( r => r[i] === mc[0][i]);
-    i++;
-  }
-  
-  i = 0;
-  
- 	while( co2Rate.length > 1 ) {
-		const mc = getMostCommon(co2Rate);
-  	co2Rate = co2Rate.filter( r => r[i] === mc[1][i]);
-    i++;
-  }
-  
-  return [ ...o2Rate, ...co2Rate].reduce((c,r) => c * parseInt(r,2), 1);
+  return [ ...getFinalValue(input,0), ...getFinalValue(input,1)].reduce((c,r) => c * parseInt(r,2), 1);
   
 }
 
