@@ -11,7 +11,8 @@ function getHVCoverage(input) {
     .reduce((c, r, i) => [...c, ...r], []);
     
   //Get count where coordinate shows up more than once
-  return getCoverageCounts(coverage).filter( c => c.count > 1).length;
+  //return getCoverageCounts(coverage).filter( c => c.count > 1).length;
+  return getCoverageCountsAlt(coverage);
 }
 
 function getAllCoverage(input) {
@@ -21,7 +22,9 @@ function getAllCoverage(input) {
     .reduce((c, r, i) => [...c, ...r], []);
   
   //Get count where coordinate shows up more than once
-  return getCoverageCounts(coverage).filter( c => c.count > 1).length;
+  //return getCoverageCounts(coverage).filter( c => c.count > 1).length
+  return getCoverageCountsAlt(coverage);
+  
 }
 
 
@@ -74,6 +77,27 @@ function getCoverageCounts(coords) {
   });
 
   return counts;
+
+}
+
+function getCoverageCountsAlt(coords) {
+  //Run through coverage array and get times each coordinate shows up.
+  const countMap = coords.reduce((c, e) => {
+  	if( c[`${e[0]}-${e[1]}`]) { 
+    	 c[`${e[0]}-${e[1]}`].count++;
+    } else {
+       c[`${e[0]}-${e[1]}`] = { count: 1 };
+    }
+    return c
+  }, {});
+  
+  let gtOne = 0;
+  
+  for( const c in countMap) {
+  	if( countMap[c].count > 1 ) gtOne++;
+  }
+  
+  return gtOne;
 
 }
 
