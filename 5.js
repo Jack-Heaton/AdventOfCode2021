@@ -53,18 +53,20 @@ function getPointsCovered(pair) {
 function getCoverageCounts(coords) {
   //Run through coverage array and get times each coordinate shows up.
   let alreadyCounted = [];
-
   let counts = [];
 
-  coords.forEach(c => {
+  [...coords].forEach(c => {
 
     if (!alreadyCounted.find(a => c[0] === a[0] && c[1] === a[1])) {
 
       alreadyCounted.push(c);
 
+			startingLength = coords.length;
+      coords = coords.filter( a => !(c[0] === a[0] && c[1] === a[1]) )
+
       counts.push({
         coord: c,
-        count: coords.filter(a => c[0] === a[0] && c[1] === a[1]).length
+        count: startingLength - coords.length
       });
 
     }
