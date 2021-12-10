@@ -1,13 +1,22 @@
 //console.log( parseLines( testSet() ));
 
-console.log(processCode(parseLines(testSet())));
-console.log(processCode(parseLines(realSet())));
+console.log("Scores for test set:", processCode(parseLines(testSet())));
+console.log("Scores for real set:", processCode(parseLines(realSet())));
 
 function processCode(code) {
 
-  return code.map(l => processLine(l))
-  .reduce((c,l) => c + (l.score || 0), 0 );
-
+  const processed = code.map(l => processLine(l))
+  
+  const errors = processed.filter(p => p.errorScore);
+  const complete = processed.filter(p => p.completeScore);
+  
+  return {
+   	errorScore: errors.reduce((c,p) => c + p.errorScore || 0, 0),
+  	completeScore: complete
+      .sort((a,b) => a.completeScore - b.completeScore)[ Math.floor( complete.length / 2)]
+      .completeScore,
+  }
+  
 };
 
 
@@ -25,12 +34,24 @@ function processLine(line) {
 function processPairs(line) {
 
   if (line.findIndex(s => !s.checked) === -1 ) {
+  	
+  	line.completeScore = line.completion.reduce((c,s) => (c * 5) + completeScore()[s], 0);
+  
     line.status = line.status || "valid";
     return line;
   }
 
+	//Auto completer
   if (line.filter(s => !s.checked && !delims()[s.char]).length === 0) {
-    line.status = line.status || "incomplete";
+    
+    const completionChar = delims()[[...line].reverse().find( s => !s.checked && delims()[s.char]).char];
+        
+    line.completion = [...(line.completion || []), completionChar ];
+    
+    line.push({
+    	char: completionChar,
+    });
+
     return line;
   }
 
@@ -42,7 +63,7 @@ function processPairs(line) {
   if (closingPair === -1) {
     line.status = "invalid";
     
-    line.score = scores()[line.find( s => !s.checked && !delims()[s.char]).char];
+    line.errorScore = errorScore()[line.find( s => !s.checked && !delims()[s.char]).char];
     
     return line;
   }
@@ -54,12 +75,21 @@ function processPairs(line) {
 
 }
 
-function scores() {
+function errorScore() {
   return {
     ">": 25137,
     "}": 1197,
     "]": 57,
     ")": 3,
+  };
+}
+
+function completeScore() {
+  return {
+    ">": 4,
+    "}": 3,
+    "]": 2,
+    ")": 1,
   };
 }
 
