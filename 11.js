@@ -1,82 +1,93 @@
-console.log(
-	parseData(
-  	protoSet()
-  )
-);
+console.log(runSteps( parseData( testSet() ), 10 ));
 
-function runStep( octo ) {
+function runSteps( octo, steps ) {
 
-	//Increase by 1
-	octo.keys.forEach( k => {
-  	octo[k] += 1
-  });
+	for( let i = 0; i < steps; i++) {
+  	octo = runStep(octo);
+  }
   
-  //Flash!
-  while( !octo.stepFlash ) {
-  	octo.stepFlash = false;
-  	octo = flash(octo);
-   }
+  return octo;
 
-	//Reset
-	octo.keys.forEach( k => {
-  	if(octo[k].p > 9) {
+} 
+
+function runStep(octo) {
+
+  //Increase all by 1
+  octo.keys.forEach(k => {
+    octo[k].p++
+  });
+
+  //Flash!
+  octo.stepFlash = false;
+  octo = flash(octo);
+
+  //Reset
+  octo.keys.forEach(k => {
+    if (octo[k].p > 9) {
       octo[k].flashed = false;
       octo[k].p = 0;
     }
   });
 
+  return octo;
+
 }
 
-function flash( octo ) {
+function flash(octo) {
 
-	//Flash any octopus that's powered up and hasn't flashed
-	octo.keys.forEach( k => {
-  	const o = octo[k];
-    if( o.p > 9 && !o.flashed) {
+  //Flash any octopus that's powered up and hasn't flashed
+  octo.keys.forEach(k => {
+    const o = octo[k];
+    if (o.p > 9 && !o.flashed) {
       //Flash!
-       octo[k].flashed = true;
-       octo[k].flashCount++;
+      octo[k].flashed = true;
+      octo[k].flashCount++;
       //Power up adjacents
-      octo[`${x-1}-${y-1}`].p++;
-      octo[`${x-1}-${y}`].p++;
-      octo[`${x-1}-${y+1}`].p++;
-      octo[`${x}-${y-1}`].p++;
-      octo[`${x}-${y+1}`].p++;
-      octo[`${x+1}-${y-1}`].p++;
-      octo[`${x+1}-${y}`].p++;
-      octo[`${x+1}-${y+1}`].p++;
+      const adjactent = [
+      octo[`${o.x-1}-${o.y-1}`],
+      octo[`${o.x-1}-${o.y}`],
+      octo[`${o.x-1}-${o.y+1}`],
+      octo[`${o.x}-${o.y-1}`],
+      octo[`${o.x}-${o.y+1}`],
+      octo[`${o.x+1}-${o.y-1}`],
+      octo[`${o.x+1}-${o.y}`],
+      octo[`${o.x+1}-${o.y+1}`],
+      ].filter( a => a )
+      	.forEach( a => {
+        	octo[`${a.x}-${a.y}`].p++;
+        });
       //Set globals
-			octo.flashCount++;
+      octo.flashCount++;
       octo.stepFlash = true;
-    } 
+    }
   });
-  
+
   return octo;
 
 }
 
 
 function parseData(d) {
-	const swarm = d.split("\n")
-  	.reduce((c, l, i) => {
-    	l.split("").forEach((s,j) =>{
-      	c[`${i}-${j}`] = { 
-        	p : parseInt(s), 
-        	x : i,
-          y : j,
-          flashCount: 0;
+  const swarm = d.split("\n")
+    .reduce((c, l, i) => {
+      l.split("").forEach((s, j) => {
+        c[`${i}-${j}`] = {
+          p: parseInt(s),
+          x: i,
+          y: j,
+          flashCount: 0,
         };
       });
       return c;
-    },{})
-    
-   return {
-   	... swarm,
+    }, {})
+
+  return {
+    ...swarm,
     keys: Object.keys(swarm),
     flashCounter: 0,
     step: 0,
     stepFlash: false,
-   };
+  };
 }
 
 function protoSet() {
