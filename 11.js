@@ -1,4 +1,4 @@
-console.log(runSteps( parseData( testSet() ), 10 ));
+console.log(runSteps( parseData( protoSet() ), 1 ));
 
 function runSteps( octo, steps ) {
 
@@ -18,12 +18,15 @@ function runStep(octo) {
   });
 
   //Flash!
-  octo.stepFlash = false;
-  octo = flash(octo);
+  while( octo.stepFlash || octo.step === 0) {
+  	octo.stepFlash = false;
+    octo = flash(octo);
+    octo.step++;
+  }
 
   //Reset
   octo.keys.forEach(k => {
-    if (octo[k].p > 9) {
+    if (octo[k].flashed) {
       octo[k].flashed = false;
       octo[k].p = 0;
     }
@@ -57,7 +60,7 @@ function flash(octo) {
         	octo[`${a.x}-${a.y}`].p++;
         });
       //Set globals
-      octo.flashCount++;
+      octo.flashCounter++;
       octo.stepFlash = true;
     }
   });
