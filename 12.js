@@ -1,8 +1,23 @@
-console.log( runPaths( protoSet()))
+console.log("Part 1, test data, valid path count: ", processData( testSet()));
+console.log("Part 1, real data, valid path count: ", processData( realSet()));
 
-function runPaths(data, inProgress) {
+function processData(data) {
 
-	const map = inProgress || parseData(data);
+	let map = parseData(data);
+
+	let step = 0;
+
+  //Continue running if any paths are not ended, else, we're done
+  while( map.paths.find( p => p.slice(-1)[0] !== "end" )) {
+  	map = runPaths( map );
+    step++;
+  }
+  
+	return map.paths.length;
+
+}
+
+function runPaths(map) {
   
   let newPaths = []
   
@@ -20,14 +35,16 @@ function runPaths(data, inProgress) {
     //get neighbors
     const neighbors = map.caves[last].neighbors;
     
-    //Consider neighbors
-    neighbors.forEach( n => {
-    	//If cave is large or not previously visited, add it as a path
-    	if( map.caves[n].isBig ||  )
-    
-    });
+    //Consider neighbors: If cave is large or not previously visited, add it as a path
+    neighbors
+    	.filter( n =>  map.caves[n].isBig || !p.includes(n))
+    	.forEach( n => {
+      	newPaths.push([ ...p, n])
+    	});
   
   });
+  
+  map.paths = newPaths;
   
   return map;
 
@@ -68,38 +85,50 @@ function parseData(d) {
    }
 }
 
-function protoSet() {
-  return `start-A
-start-b
-A-c
-A-b
-b-d
-A-end
-b-end`;
-}
-
 function testSet() {
-  return `5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526`;
+  return `fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW`;
 }
 
 function realSet() {
-  return `2138862165
-2726378448
-3235172758
-6281242643
-4256223158
-1112268142
-1162836182
-1543525861
-1882656326
-8844263151`;
+  return `pg-CH
+pg-yd
+yd-start
+fe-hv
+bi-CH
+CH-yd
+end-bi
+fe-RY
+ng-CH
+fe-CH
+ng-pg
+hv-FL
+FL-fe
+hv-pg
+bi-hv
+CH-end
+hv-ng
+yd-ng
+pg-fe
+start-ng
+end-FL
+fe-bi
+FL-ks
+pg-start`;
 }
