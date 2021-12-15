@@ -1,5 +1,32 @@
 console.log("Part 1: hole count from test data: ", doFold(parseData(testSet())).holeCount)
 console.log("Part 1: hole count from real data: ", doFold(parseData(realSet())).holeCount)
+console.log("Part 2: code from test data: ", doFolds(parseData(testSet())))
+console.log("Part 2: code from real data: ", doFolds(parseData(realSet())))
+
+function doFolds(sheet) {
+
+	let foldNumber = 0;
+  
+  while( foldNumber < sheet.folds.length ) {
+  	sheet = doFold(sheet, foldNumber);
+  	foldNumber++;
+  }
+
+	const display = Array(sheet.max[1] + 1).fill(
+  	Array(sheet.max[0] + 1).fill(" ")
+  ).map( (r, y) => {
+  
+  	return r.map( (c, x) => {
+    	return sheet.grid[`${x}-${y}`] ? "X" : " ";
+    }).join("");
+  
+  }).join("\n");
+
+  return `
+${display}
+  `;
+
+}
 
 
 function doFold(sheet, foldNumber) {
